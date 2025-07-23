@@ -1,0 +1,8 @@
+pyspark           
+pandas
+pyarrow
+s3fs
+pyyaml
+pytest
+pytest-cov
+python-dotenv

@@ -1,0 +1,12 @@
+name: Scigility
+channels:
+  - conda-forge
+dependencies:
+  - pyspark      
+  - pandas
+  - pyarrow
+  - s3fs                 
+  - pyyaml               
+  - pytest         
+  - python-dotenv 
+  
