@@ -1,0 +1,13 @@
+# S3 settings
+s3:
+  bucket: "${AWS_BUCKET_NAME}"
+  input_prefix: "raw"
+  output:
+    transactions: "processed/cleaned-trans"
+    loans:         "processed/avg-loans"
+
+# Cleaning rules
+cleaning:
+  trans_type_corrections:
+    PRJIEM: PRIJEM
+
