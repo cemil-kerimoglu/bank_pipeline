@@ -24,7 +24,7 @@ def read_csv_from_s3(
              .csv(path, inferSchema=True)
     )
 
-
+# Write the output parquet files to S3 bucket
 def write_parquet_to_s3(
     df: DataFrame,
     bucket: str,
@@ -37,12 +37,7 @@ def write_parquet_to_s3(
     path = f"s3a://{bucket}/{output_prefix.rstrip('/')}"
     df.write.mode(mode).parquet(path)
 
-
-# -----------------------------------------------------------
-# Local filesystem helper
-# -----------------------------------------------------------
-
-
+# Write the output parquet files to local filesystem
 def write_parquet_local(
     df: DataFrame,
     output_prefix: str,
