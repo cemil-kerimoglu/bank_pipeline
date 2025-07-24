@@ -9,4 +9,5 @@ dependencies:
   - s3fs
   - pyyaml
   - pytest
+  - pytest-cov
   - python-dotenv
