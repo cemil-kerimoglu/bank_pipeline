@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, when
 
-from utils.data_utils import read_csv_from_s3, write_parquet_to_s3
+from src.utils.data_utils import read_csv_from_s3, write_parquet_local
 
 
 class TransProcessor:
@@ -44,4 +44,5 @@ class TransProcessor:
         return cleaned
 
     def save(self, df: DataFrame) -> None:
-        write_parquet_to_s3(df, self.bucket, self.out_prefix)
+        """Persist cleaned transactions under data/processed."""
+        write_parquet_local(df, self.out_prefix)

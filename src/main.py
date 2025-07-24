@@ -2,16 +2,19 @@ import os
 from dotenv import load_dotenv
 import yaml
 
-from utils.spark_utils import get_spark_session
-from jobs.trans_processing import TransProcessor
-from jobs.loan_analysis    import LoanAnalyzer
+# Use package-relative imports; this module is executed via `python -m src.main`
+from src.utils.spark_utils import get_spark_session
+from src.jobs.trans_processing import TransProcessor
+from src.jobs.loan_analysis import LoanAnalyzer
 
 
 def main():
     # 1) load .env and pipeline config
     load_dotenv()  # picks up AWS_*, etc.
     with open("conf/pipeline.yaml", "r") as f:
-        config = yaml.safe_load(f)
+        raw_yaml = f.read()
+    # Expand any ${VAR} placeholders using values from the loaded environment
+    config = yaml.safe_load(os.path.expandvars(raw_yaml))
 
     # 2) start Spark
     spark = get_spark_session("BankDataPipeline", spark_conf_path="conf/spark-defaults.conf")
