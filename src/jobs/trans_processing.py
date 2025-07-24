@@ -44,5 +44,8 @@ class TransProcessor:
         return cleaned
 
     def save(self, df: DataFrame) -> None:
-        """Persist cleaned transactions under data/processed."""
+        """
+        By default we write to the local filesystem so that the Parquet files
+        end up in the repository’s data folder (e.g. data/processed/avg-loans).
+        """
         write_parquet_local(df, self.out_prefix)
