@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+*.dylib
+*.o
+*.pyd
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+
+# Builds & distribution
+build/
+dist/
+
+# Notebooks & checkpoints
+*.ipynb
+.ipynb_checkpoints/
+
+# Local data & artifacts
+artifacts/
+data/
+
+# Environment / secrets
+.env
+
+# Git & VCS
+.git
+.gitignore
+
+# IDE & editor configs
+.vscode/
+.idea/
+
+# Tests (excluded from runtime image)
+tests/ 
