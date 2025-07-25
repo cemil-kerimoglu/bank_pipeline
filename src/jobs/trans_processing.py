@@ -46,6 +46,6 @@ class TransProcessor:
     def save(self, df: DataFrame) -> None:
         """
         By default we write to the local filesystem so that the Parquet files
-        end up in the repository’s data folder (e.g. data/processed/avg-loans).
+        end up in the repository’s data folder (e.g. data/processed/cleaned-trans).
         """
         write_parquet_local(df, self.out_prefix)
