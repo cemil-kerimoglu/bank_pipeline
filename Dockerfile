@@ -10,8 +10,8 @@ LABEL maintainer="DevOps Team <devops@example.com>"
 # Copy and install the conda environment (better caching)
 COPY environment.yml /tmp/environment.yml
 
-# Install all dependencies into a dedicated env called "Scigility"
-RUN micromamba install --yes -n Scigility -f /tmp/environment.yml \
+# Install all dependencies into a dedicated env called "Scigility" (use YAML spec)
+RUN micromamba env create -n Scigility -f /tmp/environment.yml \
     && micromamba clean --all --yes
 
 # Activate the environment by default for every RUN / CMD / ENTRYPOINT layer
