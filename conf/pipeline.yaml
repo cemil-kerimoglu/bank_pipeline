@@ -1,4 +1,5 @@
-# S3 settings
+# File reading and writing configuration
+# We are reading the csv files from S3 bucket but writing the parquet files to a local directory
 s3:
   bucket: "${AWS_BUCKET_NAME}"
   input_prefix: ""
