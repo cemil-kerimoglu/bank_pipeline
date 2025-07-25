@@ -27,16 +27,22 @@ ENV JAVA_HOME=/opt/conda/envs/Scigility
 #########################
 FROM base as runtime
 
+# Need root privileges to create a non-root runtime user
+USER root
+
 # Create an unprivileged user for security best practices
-RUN useradd -m appuser
+RUN useradd --create-home --shell /bin/bash appuser
 
 # Set working directory
 WORKDIR /app
 
-# Copy the rest of the repository
+# Copy the repository
 COPY . /app
-RUN chown -R appuser /app
 
+# Adjust ownership
+RUN chown -R appuser:appuser /app
+
+# Drop privileges
 USER appuser
 
 # Default command to run the pipeline
