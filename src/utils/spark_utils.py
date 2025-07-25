@@ -62,12 +62,6 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
 
     builder = builder.config("spark.jars.packages", packages)
 
-    # Make sure the Maven-downloaded 3.4.x jars shadow Spark's bundled Hadoop 3.3
-    # jars to avoid method-signature mismatches (NoSuchMethodError).
-    builder = builder \
-        .config("spark.executor.userClassPathFirst", "true") \
-        .config("spark.driver.userClassPathFirst", "true")
-
     jvm_open_flag = "--add-opens java.base/javax.security.auth=ALL-UNNAMED"
     builder = builder \
         .config("spark.driver.extraJavaOptions", jvm_open_flag) \
