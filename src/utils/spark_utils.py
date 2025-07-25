@@ -53,8 +53,12 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
 
     hadoop_ver = "3.4.0"
     aws_sdk_ver = "1.12.640"
-    packages = f"org.apache.hadoop:hadoop-aws:{hadoop_ver}," \
-               f"com.amazonaws:aws-java-sdk-bundle:{aws_sdk_ver}"
+
+    packages = (
+        f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver},"
+        f"org.apache.hadoop:hadoop-aws:{hadoop_ver},"
+        f"com.amazonaws:aws-java-sdk-bundle:{aws_sdk_ver}"
+    )
 
     builder = builder.config("spark.jars.packages", packages)
 
