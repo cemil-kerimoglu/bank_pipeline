@@ -30,16 +30,7 @@ jobs:
       - name: Run pytest & generate coverage
         shell: bash -l {0}
         run: |
-          pytest -q --cov=src --cov-report=xml --cov-report=html
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        if: always()  # Upload even if tests fail
-        with:
-          name: coverage-report
-          path: |
-            coverage.xml
-            htmlcov/
+          pytest -q
 
   build-and-push:
     name: "Build & Push Docker Image"
