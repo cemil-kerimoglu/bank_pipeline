@@ -46,4 +46,4 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 # Default command to run the pipeline
-CMD ["python", "-m", "src.main"] 
+CMD ["python", "-m", "main"] 
