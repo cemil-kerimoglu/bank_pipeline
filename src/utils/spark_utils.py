@@ -1,5 +1,6 @@
 import os
 from pyspark.sql import SparkSession
+import pyspark
 
 
 def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSession:
@@ -9,7 +10,7 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
     """
     builder = SparkSession.builder.appName(app_name)
 
-    # Pick up existing defaults from a spark-defaults.conf file if provided
+    # This picks up existing defaults from a spark-defaults.conf file if provided
     if spark_conf_path and os.path.isfile(spark_conf_path):
         with open(spark_conf_path) as conf_file:
             for line in conf_file:
@@ -48,11 +49,29 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
     # ------------------------------------------------------------------
     # Spark downloaded by PyPI (or conda) is the *without-Hadoop* build; the
     # S3AFileSystem implementation therefore lives in the optional hadoop-aws
-    # module.  Pull it (and the shaded AWS SDK) via the built-in Maven
+    # module. We need to pull it (and the shaded AWS SDK) via the built-in Maven
     # resolver so users don’t have to manage jars manually.
 
-    hadoop_ver = "3.4.0"
-    aws_sdk_ver = "1.12.640"
+    # Environment detection: we use different versions based on PySpark version
+    pyspark_version = pyspark.__version__
+    is_container = os.path.exists('/.dockerenv') or os.getenv('DOCKER_ENV') == 'true'
+    
+    # Debug logging
+    print(f"DEBUG: PySpark version: {pyspark_version}")
+    print(f"DEBUG: Is container: {is_container}")
+    print(f"DEBUG: /.dockerenv exists: {os.path.exists('/.dockerenv')}")
+    print(f"DEBUG: DOCKER_ENV: {os.getenv('DOCKER_ENV')}")
+    
+    if pyspark_version.startswith('4.') and not is_container:
+        # Local environment with PySpark 4.x - we use working versions
+        hadoop_ver = "3.4.0"
+        aws_sdk_ver = "1.12.640"
+        print("DEBUG: Using LOCAL versions (Hadoop 3.4.0 + AWS SDK 1.12.640)")
+    else:
+        # Docker environment with PySpark 3.5.x - we use conservative versions
+        hadoop_ver = "3.3.4" 
+        aws_sdk_ver = "1.12.262"
+        print("DEBUG: Using DOCKER versions (Hadoop 3.3.4 + AWS SDK 1.12.262)")
 
     packages = (
         f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver},"
