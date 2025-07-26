@@ -5,8 +5,6 @@
 ############################
 FROM mambaorg/micromamba:1.5.6-bullseye-slim as base
 
-LABEL maintainer="DevOps Team <devops@example.com>"
-
 # Copy and install the conda environment (better caching)
 COPY environment.yml /tmp/environment.yml
 
