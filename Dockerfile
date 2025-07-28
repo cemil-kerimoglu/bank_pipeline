@@ -20,9 +20,6 @@ ENV CONDA_DEFAULT_ENV=Scigility
 # JAVA_HOME is required by PySpark
 ENV JAVA_HOME=/opt/conda/envs/Scigility
 
-# Indicate this is a containerized environment
-ENV DOCKER_ENV=true
-
 #########################
 # Runtime image
 #########################

@@ -52,26 +52,12 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
     # module. We need to pull it (and the shaded AWS SDK) via the built-in Maven
     # resolver so users don’t have to manage jars manually.
 
-    # Environment detection: we use different versions based on PySpark version
-    pyspark_version = pyspark.__version__
-    is_container = os.path.exists('/.dockerenv') or os.getenv('DOCKER_ENV') == 'true'
+    # The versions compatible with PySpark 4.0.*
+    hadoop_ver = "3.4.0"
+    aws_sdk_ver = "1.12.640"
     
-    # Debug logging
-    print(f"DEBUG: PySpark version: {pyspark_version}")
-    print(f"DEBUG: Is container: {is_container}")
-    print(f"DEBUG: /.dockerenv exists: {os.path.exists('/.dockerenv')}")
-    print(f"DEBUG: DOCKER_ENV: {os.getenv('DOCKER_ENV')}")
-    
-    if pyspark_version.startswith('4.') and not is_container:
-        # Local environment with PySpark 4.x - we use working versions
-        hadoop_ver = "3.4.0"
-        aws_sdk_ver = "1.12.640"
-        print("DEBUG: Using LOCAL versions (Hadoop 3.4.0 + AWS SDK 1.12.640)")
-    else:
-        # Docker environment with PySpark 3.5.x - we use conservative versions
-        hadoop_ver = "3.3.4" 
-        aws_sdk_ver = "1.12.262"
-        print("DEBUG: Using DOCKER versions (Hadoop 3.3.4 + AWS SDK 1.12.262)")
+    print(f"DEBUG: PySpark version: {pyspark.__version__}")
+    print(f"DEBUG: Using Hadoop {hadoop_ver} + AWS SDK {aws_sdk_ver}")
 
     packages = (
         f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver},"

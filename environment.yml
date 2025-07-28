@@ -2,7 +2,7 @@ name: Scigility
 channels:
   - conda-forge
 dependencies:
-  - pyspark=3.5.* # compiled for Java 17
+  - pyspark=4.0.* # compiled for Java 17
   - pandas
   - pyarrow
   - openjdk=17 # Spark/Hadoop compatible LTS version
