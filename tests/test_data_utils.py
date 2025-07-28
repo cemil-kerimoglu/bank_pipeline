@@ -1,8 +1,6 @@
 import os
 from types import SimpleNamespace
 
-import pytest
-
 from src.utils import data_utils
 
 
