@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import yaml
 
-# Use package-relative imports; this module is executed via `python -m src.main`
+# Use package-relative imports; this module is executed via `python -m main`
 from src.utils.spark_utils import get_spark_session
 from src.jobs.trans_processing import TransProcessor
 from src.jobs.loan_analysis import LoanAnalyzer

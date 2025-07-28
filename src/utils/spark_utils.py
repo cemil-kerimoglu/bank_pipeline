@@ -47,23 +47,24 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
     # ------------------------------------------------------------------
     # Ensure Hadoop AWS + AWS SDK JARs are on the class-path
     # ------------------------------------------------------------------
-    # Spark downloaded by PyPI (or conda) is the *without-Hadoop* build; the
+    # Spark downloaded by PyPI (or conda) is without Hadoop libraries; the
     # S3AFileSystem implementation therefore lives in the optional hadoop-aws
-    # module. We need to pull it (and the shaded AWS SDK) via the built-in Maven
-    # resolver so users don’t have to manage jars manually.
+    # module. We need to pull it (and the AWS SDK) via the built-in Maven (Java's package manager)
+    # resolver so users don’t have to manage jar files (Java libraries) manually.
 
     # The versions compatible with PySpark 4.0.*
     hadoop_ver = "3.4.0"
     aws_sdk_ver = "1.12.640"
 
     packages = (
-        f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver},"
-        f"org.apache.hadoop:hadoop-aws:{hadoop_ver},"
-        f"com.amazonaws:aws-java-sdk-bundle:{aws_sdk_ver}"
+        f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver}," # core Hadoop functionality
+        f"org.apache.hadoop:hadoop-aws:{hadoop_ver}," # Hadoop's connector to AWS S3
+        f"com.amazonaws:aws-java-sdk-bundle:{aws_sdk_ver}" # Amazon's official JAVA SDK for AWS services
     )
 
     builder = builder.config("spark.jars.packages", packages)
 
+    # Allow Spark access to some of Java's internal security classes
     jvm_open_flag = "--add-opens java.base/javax.security.auth=ALL-UNNAMED"
     builder = builder \
         .config("spark.driver.extraJavaOptions", jvm_open_flag) \
