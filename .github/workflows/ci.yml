@@ -25,9 +25,8 @@ jobs:
           environment-file: environment.yml
           environment-name: Scigility
           cache-downloads: true
-          cache-env: true
 
-      - name: Run pytest & generate coverage
+      - name: Run pytest
         shell: bash -l {0}
         run: |
           pytest -q

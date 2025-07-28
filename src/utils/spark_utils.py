@@ -55,9 +55,6 @@ def get_spark_session(app_name: str, spark_conf_path: str = None) -> SparkSessio
     # The versions compatible with PySpark 4.0.*
     hadoop_ver = "3.4.0"
     aws_sdk_ver = "1.12.640"
-    
-    print(f"DEBUG: PySpark version: {pyspark.__version__}")
-    print(f"DEBUG: Using Hadoop {hadoop_ver} + AWS SDK {aws_sdk_ver}")
 
     packages = (
         f"org.apache.hadoop:hadoop-client-runtime:{hadoop_ver},"
