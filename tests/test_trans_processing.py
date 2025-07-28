@@ -60,9 +60,7 @@ def test_trans_processor_run(spark, monkeypatch, trans_processor_config):
     processor = TransProcessor(spark, trans_processor_config)
     result = processor.run()
 
-    # Validate expected row count and content purely via Catalyst filters to
-    # avoid materialising rows back to the Python driver (which requires a
-    # Python worker process on Windows).
+    # Validate expected row count
     # Should have 3 transactions (accounts 1, 4, 5) and filter out accounts 2, 3
     assert result.count() == 3
     

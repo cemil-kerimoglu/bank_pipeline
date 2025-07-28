@@ -27,7 +27,9 @@ def test_loan_analyzer_run(spark, monkeypatch, loan_analyzer_config):
         [
             Row(account_id=1, amount=100),
             Row(account_id=2, amount=200),
-            Row(account_id=3, amount=300),  # will be dropped (no account mapping)
+            Row(account_id=3, amount=300),  # will be dropped (the account cannot be mapped to a district)
+            Row(account_id=4, amount=400), 
+            Row(account_id=5, amount=500),  
         ]
     )
 
@@ -35,6 +37,9 @@ def test_loan_analyzer_run(spark, monkeypatch, loan_analyzer_config):
         [
             Row(account_id=1, district_id=10),
             Row(account_id=2, district_id=11),
+            Row(account_id=4, district_id=10),  
+            Row(account_id=5, district_id=11),
+            # account 3 is missing, so it will be dropped
         ]
     )
 
@@ -63,16 +68,18 @@ def test_loan_analyzer_run(spark, monkeypatch, loan_analyzer_config):
     # Cache to avoid recomputation
     result.cache()
 
-    # Assert expected number of rows (one per kept district)
+    # Assert expected number of rows (one per district)
     assert result.count() == 2
 
-    # Assert each district row exists with the correct average (using integer
-    # equality check to stay on the JVM side – Catalyst can compare doubles).
+    # Assert each district row exists with the correct average loan amount
+    # District 10 should have an average of (100 + 400) / 2 = 250
+    # District 11 should have an average of (200 + 500) / 2 = 350
+
     assert (
         result.filter(
             (result.district_id == 10)
             & (result.A2 == "District10")
-            & (result.avg_loan_amount == 100)
+            & (result.avg_loan_amount == 250)
         ).count()
         == 1
     )
@@ -80,7 +87,7 @@ def test_loan_analyzer_run(spark, monkeypatch, loan_analyzer_config):
         result.filter(
             (result.district_id == 11)
             & (result.A2 == "District11")
-            & (result.avg_loan_amount == 200)
+            & (result.avg_loan_amount == 350)
         ).count()
         == 1
     ) 
