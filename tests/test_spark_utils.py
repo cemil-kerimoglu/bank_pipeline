@@ -22,15 +22,11 @@ def test_get_spark_session_raises_without_credentials(monkeypatch):
 def test_get_spark_session_success_with_dummy_builder(monkeypatch):
     """When credentials are present, the builder chain should execute and return our stub session."""
 
-    # ------------------------------------------------------------------
     # Provide minimal AWS env vars so the function proceeds past validation
-    # ------------------------------------------------------------------
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "key")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")
 
-    # ------------------------------------------------------------------
     # Stub out the Spark builder so no real JVM / Spark context is started
-    # ------------------------------------------------------------------
     class DummyBuilder:
         def __init__(self):
             self.confs = {}
