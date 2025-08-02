@@ -26,7 +26,7 @@ def test_end_to_end_pipeline(spark, monkeypatch):
     trans_df = spark.createDataFrame(
         [
             Row(account_id=1, type="PRJIEM"),  # typo that should be corrected
-            Row(account_id=2, type="VYDAJ"),   # filtered later – account_id missing in cleaned set
+            Row(account_id=2, type="VYDAJ"),   # valid
             Row(account_id=3, type="VYDAJ"),   # filtered later – account_id missing in cleaned set
             Row(account_id=4, type="PRIJEM"),  # valid
             Row(account_id=5, type="VYDAJ"),   # valid
@@ -39,7 +39,7 @@ def test_end_to_end_pipeline(spark, monkeypatch):
             Row(account_id=2, district_id=11),
             Row(account_id=4, district_id=10),
             Row(account_id=5, district_id=11),
-            # NOTE: account_id 3 intentionally missing
+            # account_id 3 intentionally missing
         ]
     )
 
@@ -47,7 +47,7 @@ def test_end_to_end_pipeline(spark, monkeypatch):
         [
             Row(account_id=1, amount=100),
             Row(account_id=2, amount=200),
-            Row(account_id=3, amount=300),  # dropped later – unknown district
+            Row(account_id=3, amount=300),  # dropped later 
             Row(account_id=4, amount=400),
             Row(account_id=5, amount=500),
         ]
@@ -113,23 +113,18 @@ def test_end_to_end_pipeline(spark, monkeypatch):
     cleaned_df = captured_writes["processed/cleaned-trans"]
     avg_df = captured_writes["processed/avg-loans"]
 
-    # Cleaned transactions: only accounts 1, 4, 5 should remain & typo corrected
-    assert cleaned_df.count() == 3
-    assert cleaned_df.filter(
-        (cleaned_df.account_id == 1) & (cleaned_df.type == "PRIJEM")
-    ).count() == 1
+    # Cleaned transactions: only accounts 1, 2, 4 and 5 should remain & typo corrected
+    assert cleaned_df.count() == 4
+    assert cleaned_df.filter((cleaned_df.account_id == 1) & (cleaned_df.type == "PRIJEM")).count() == 1
 
     # Average loans: expect 2 districts with the correct aggregated amounts
     assert avg_df.count() == 2
 
     # District 10 average = (100 + 400) / 2
-    assert (
-        avg_df.filter((avg_df.district_id == 10) & (avg_df.avg_loan_amount == 250)).count()
-        == 1
-    )
+    assert (avg_df.filter((avg_df.district_id == 10) & (avg_df.avg_loan_amount == 250)).count()== 1)
 
     # District 11 average = (200 + 500) / 2
-    assert (
-        avg_df.filter((avg_df.district_id == 11) & (avg_df.avg_loan_amount == 350)).count()
-        == 1
-    ) 
+    assert (avg_df.filter((avg_df.district_id == 11) & (avg_df.avg_loan_amount == 350)).count()== 1) 
+
+    # Any loan without a valid district_id should be removed
+    assert avg_df.filter(avg_df.district_id.isNull()).count() == 0 
