@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/bank_pipeline
 
 jobs:
-  tests:
+  unit-tests:
     name: "Run Unit Tests"
     runs-on: ubuntu-latest
 
@@ -29,11 +29,53 @@ jobs:
       - name: Run pytest
         shell: bash -l {0}
         run: |
-          pytest tests/           
+          pytest -v -m "not integration and not e2e" tests/
+
+  integration-tests:
+    name: "Run Integration Tests"
+    needs: unit-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: environment.yml
+          environment-name: Scigility
+          cache-downloads: true
+
+      - name: Run pytest (integration)
+        shell: bash -l {0}
+        run: |
+          pytest -v -m integration tests/
+
+  e2e-tests:
+    name: "Run End-to-End Tests"
+    needs: integration-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: environment.yml
+          environment-name: Scigility
+          cache-downloads: true
+
+      - name: Run pytest (e2e)
+        shell: bash -l {0}
+        run: |
+          pytest -v -m e2e tests/
 
   build-and-push:
     name: "Build & Push Docker Image"
-    needs: tests
+    needs: e2e-tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
